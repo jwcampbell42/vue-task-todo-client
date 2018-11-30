@@ -7,8 +7,8 @@ export class APIService{
 		const url = `${API_URL}/tasks`;
 		return axios.get(url).then( response => response.data );
 	}
-	completeTask( task ) {
-		const url = `${API_URL}/tasks/complete/${task.id}`;
+	completeTask( id ) {
+		const url = `${API_URL}/tasks/complete/${id}`;
 		axios.patch( url ).then( response => response.data );
 	}
 	addTask( name ) {

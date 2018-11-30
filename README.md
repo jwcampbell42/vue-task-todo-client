@@ -1,29 +1,9 @@
 # client
 
-## Project setup
-```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Run your tests
-```
-npm run test
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
+## Getting Started
+1. `npm install`
+2. `npm run serve`
+3. Navigate in your browser to http://localhost:8080/
 
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).

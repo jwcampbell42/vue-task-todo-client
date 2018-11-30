@@ -1,54 +1,44 @@
 <template>
 <div class="tasks">
 		<h1>Tasks</h1>
-		<table class="table center table-bordered table-hover">
-			<thead>
-				<tr>
-					<th>Id</th>
-					<th>Name (Double-click to edit)</th>
-					<th>Completed</th>
-					<th>Delete</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr v-for="( task, index ) in tasks"
-					class="task"
-					:key="task.id"
-					:class=" { editing: task == editedTask }">
-					<td>
-						<span><b> {{ task.id }} </b></span>
-					</td>
-					<td>
-						<label @dblclick="editTask(task, index)" v-show="!(editing == index)"><b>{{ task.name }}</b></label><br />
-						<input class="edit" type="text"
-						v-model="task.name"
-						v-show="editing == index"
-						v-task-focus="task == editedTask"
-						@keyup.enter="doneEdit(task)"
-						@keyup.esc="cancelEdit(task)">
-					</td>
-					<td>
-						<input class="toggle" type="checkbox" v-model="task.completed" @click="completeTask( task )">
-					</td>
-					<td>
-						<button @click="deleteTask( task, index )">X</button>
-					</td>
-				</tr>
-				<tr>
-					<td></td>
-					<td>
-						<input class="new-task" type="text"
+		<b-container><b-row><b-col md="10" offset-md="1">
+		<b-table outlined striped :fields="fields" :items="tasks">
+			<template slot="Id" slot-scope="data"> {{ data.item.id }} </template>
+			<template slot="Name" slot-scope="data">
+				<span v-b-tooltip.hover title="Double-click to edit."
+					@dblclick="editTask(data.item, data.index)"
+					v-show="!(editing == data.index)">
+						{{ data.item.name }}
+				</span>
+				<b-form-input class="edit" type="text"
+						v-model="data.item.name"
+						v-show="editing == data.index"
+						v-task-focus="data.item == editedTask"
+						@keyup.enter.native="doneEdit(data.item)"
+						@keyup.esc.native="cancelEdit(data.item)">
+				</b-form-input>
+			</template>
+			<template slot="Completed" slot-scope="data">
+				<b-form-checkbox v-model="data.item.completed"
+					value="1" unchecked-value="0"
+					@input="completeTask( data.item.id )">
+				</b-form-checkbox>
+			</template>
+			<template slot="Delete" slot-scope="data">
+				<b-button variant="danger" @click="deleteTask( data.item, data.index )">
+					<font-awesome-icon icon="trash"/>
+				</b-button>
+			</template>
+		</b-table></b-col></b-row>
+		<b-row><b-col md="5" offset-md="3">
+		<b-input-group>
+			<b-form-input class="new-task" type="text"
 						placeholder="Create a new task."
 						v-model="newTask"
-						@keyup.enter="addTask">
-					</td>
-					<td>
-						<input class="toggle" type="checkbox"  @click="completeTask( task )">
-					</td>
-					<td></td>
-				</tr>
-			</tbody>
-		</table>
+						@keyup.enter.native="addTask">
+			</b-form-input>
+		</b-input-group></b-col></b-row>
+		</b-container>
 	</div>
 </template>
 
@@ -61,6 +51,12 @@ export default {
 		return {
 			tasks: [],
 			newTask: "",
+			fields: [
+				"Id",
+				"Name",
+				"Completed",
+				"Delete"
+			],
 			editedTask: null,
 			editing: null
 		}
@@ -73,8 +69,8 @@ export default {
 			const response = await apiService.getTasks()
 			this.tasks = response.data
 		},
-		async completeTask ( task ) {
-			await apiService.completeTask( task );
+		async completeTask ( id ) {
+			await apiService.completeTask( id );
 		},
 		async addTask () {
 			let name = this.newTask && this.newTask.trim();
@@ -122,16 +118,3 @@ export default {
 
 }
 </script>
-<style scoped>
-table.center {
-	width:50%;
-	margin-left:25%;
-	margin-right:25%;
-}
-table, th, td {
-	border: 1px solid black;
-}
-table {
-	border-collapse: collapse;
-}
-</style>
